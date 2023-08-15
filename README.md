@@ -10,8 +10,8 @@ Our dataset mainly consists of 169 US-CEUS samples, readers can find some sample
 4、Train & Test
 
 Train: 
-python 5_crossitercopy.py  --batch-size=16 --model_name=TransUnet --data-path=../datasets/us_small --lr=1e-4 --min-lr=5e-5 --epochs=300 --task=crossiter --criterion_name=DiceLoss --use_mmg --total_rounds=10 --ceus_resume='path of model trained on CEUS modality' --us_resume='path of model trained on CEUS modality' --suffix='An optional parameter that identifies the training process'
+python 5_crossitercopy.py  --batch-size=16 --model_name=TransUnet --data-path=datasets/us_small --lr=1e-4 --min-lr=5e-5 --epochs=300 --task=crossiter --criterion_name=DiceLoss --use_mmg --total_rounds=10 --ceus_resume='path of model trained on CEUS modality' --us_resume='path of model trained on CEUS modality' --suffix='An optional parameter that identifies the training process'
 
 Test:
-CEUS modality: python 5_infer.py --data-path=../datasets/ceus_frames --test --resume='path of model trained on CEUS modality' --modality=CEUS
-US modality: python 5_infer.py --data-path=../datasets/us_small --test --resume='path of model trained on US modality' --modality=US
+CEUS modality: python 5_infer.py --data-path=datasets/ceus_frames --test --resume='path of model trained on CEUS modality' --modality=CEUS
+US modality: python 5_infer.py --data-path=datasets/us_small --test --resume='path of model trained on US modality' --modality=US
