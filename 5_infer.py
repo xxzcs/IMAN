@@ -112,11 +112,7 @@ class HDScore(base.Metric):
     def _hd_score(self, score, target):
         target = target.float()
         hd_score = 0
-        # print("test in method!!!!!!!!!!!!!!!!!!!!")
-        # print(score)
-        # print(score.shape) # torch.Size([16, 224, 224])
-        # print(target)
-        # print(target.shape) # torch.Size([16, 224, 224])
+
         num = score.shape[0] #16
         
         for i in range(num):
@@ -133,11 +129,9 @@ class HDScore(base.Metric):
     def forward(self, y_pr, y_gt):
         # 1-dice_loss
         y_pr = self.activation(y_pr)
-        # print(y_pr.shape) # torch.Size([16, 1, 224, 224])
-        # print(y_gt.shape) # torch.Size([16, 1, 224, 224])
-        hd_score = self._hd_score(y_pr[:, 0, ...], y_gt[:, 0, ...]) #切片意义
-        # hd_score = self._hd_score(y_pr, y_gt) #切片意义
 
+        hd_score = self._hd_score(y_pr[:, 0, ...], y_gt[:, 0, ...]) 
+ 
         hd_score_tensor = torch.tensor(hd_score).cuda()    
         return hd_score_tensor
 
@@ -179,7 +173,7 @@ def get_args_parser():
     parser.add_argument('--batch-size', default=16, type=int)
     parser.add_argument('--modality', default='US', type=str)
     parser.add_argument('--suffix', default='', type=str)
-    parser.add_argument('--epochs', default=200, type=int)
+    parser.add_argument('--epochs', default=300, type=int)
     parser.add_argument('--thresh', default=0.5, type=float)
     parser.add_argument('--total_rounds', default=10, type=int)
     parser.add_argument('--earlystop_interval', default=50, type=int)
@@ -218,7 +212,7 @@ def get_args_parser():
                         help='activatiuon func to apply after the final layer')
 
     parser.add_argument('--encoder_depth', default=5, type=int, help='model encoder depth')
-    parser.add_argument('--input-size', default=224, type=int, help='images input size')
+    parser.add_argument('--input-size', default=320, type=int, help='images input size')
     parser.add_argument('--nb_classes', default=1, type=int, help='class num')
 
     parser.add_argument('--drop', type=float, default=0.0, metavar='PCT',
@@ -792,7 +786,7 @@ def eval():
     # load best saved checkpoint
     pth_names = [i for i in os.listdir(args.resume) if i.startswith(args.modality.lower())]
     print(pth_names)
-    args.total_rounds = 30
+    args.total_rounds = 10
 
     for pth_name in pth_names:
         print('* Dealing ', pth_name)
@@ -870,8 +864,8 @@ def eval():
 
             metrics = [
                 DiceScore(),
-                smp.utils.metrics.IoU(threshold=0.5),
-                HDScore(),
+                # smp.utils.metrics.IoU(threshold=0.5),
+                # HDScore(),
                 # HausdorffScore(),
             ]
             test_epoch = smp.utils.train.ValidEpoch(
@@ -922,8 +916,8 @@ def eval():
 
             metrics = [
                 DiceScore(),
-                smp.utils.metrics.IoU(threshold=0.5),
-                HDScore(),
+                # smp.utils.metrics.IoU(threshold=0.5),
+                # HDScore(),
                 # HausdorffScore(),
             ]
             test_epoch = smp.utils.train.ValidEpoch(
@@ -1105,8 +1099,8 @@ def main(args):
         if args.modality == 'US':
             args.in_channels = 4
         else:
-            args.in_channels = 6 #14
-        config_vit.in_channels = args.in_channels #+ 1 # 3
+            args.in_channels = 6 
+        config_vit.in_channels = args.in_channels 
  
         # print("test the config of transunet!!!!!!!!!!")                           
         # print(config_vit)
@@ -1177,8 +1171,8 @@ if __name__ == '__main__':
         args.encoder = dic['encoder']
         if args.modality == 'CEUS':
             args.in_channels = 5
-            args.kernel_size = 100 #50 #100
-            args.filter = 'mean'#'mean'#'gaussian'
+            args.kernel_size = 100 
+            args.filter = 'mean'
         else:
             args.in_channels = 3
             args.kernel_size = 75

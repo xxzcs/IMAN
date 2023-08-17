@@ -4,7 +4,7 @@
 
 2、Environment
 
-Please prepare an environment with python=3.7, and then use the command "pip install -r requirements.txt" for the dependencies
+Please prepare an environment with cuda 11.0 and python=3.8, and then use the command "pip install -r requirements.txt" for the dependencies
 
 3、Dataset
 

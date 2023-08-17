@@ -193,7 +193,7 @@ def get_args_parser():
 
     # parser.add_argument('--in_channels', default=3, type=int, help='images input channel number')
     # Dataset parameters
-    parser.add_argument('--data-path', default='/data/wutianhao/datasets/us_small', type=str,
+    parser.add_argument('--data-path', default='../datasets/us_small', type=str,
                         help='dataset path')
     parser.add_argument('--task', type=str, help='Task number for gamma')
     parser.add_argument('--lr', type=float, default=5e-4, metavar='LR',
@@ -218,7 +218,7 @@ def get_args_parser():
                         help='activatiuon func to apply after the final layer')
 
     parser.add_argument('--encoder_depth', default=5, type=int, help='model encoder depth')
-    parser.add_argument('--input-size', default=224, type=int, help='images input size')
+    parser.add_argument('--input-size', default=320, type=int, help='images input size')
     parser.add_argument('--nb_classes', default=1, type=int, help='class num')
 
     parser.add_argument('--drop', type=float, default=0.0, metavar='PCT',
@@ -403,9 +403,9 @@ def gen_mmg(modality='US', root_path='../datasets/us_small', resume_path='', rou
         '''
         mmg mask
         '''
-        kernel_size = 100 #75
+        kernel_size = 100
         thresh = 0.1
-        frame_num = 5 #9 #13 #5
+        frame_num = 5 
 
         base_path = os.path.join(root_path, 'us_img_all')
         out_dir = os.path.join('../datasets/ceus_frames', 'ceus_mmg_%s_th%s_kn%d_fn%d_rd%d%s' %
@@ -461,10 +461,7 @@ def gen_mmg(modality='US', root_path='../datasets/us_small', resume_path='', rou
             img = np.concatenate([img, b], axis=0)
 
             img = torch.Tensor(img).cuda().unsqueeze(0)
-            # print("test_img_shape")
-            # print(round_num)
-            # print(img.shape) #[1, 4, 224, 224]
-            # print("test!!!!!!!!!!!!!!!!!!!!!!")
+
             pred = model(img)
             # print("after test!!!!!!!!!!!!!!")
             pred = pred.squeeze().detach().cpu().numpy()
@@ -500,9 +497,9 @@ def gen_mmg(modality='US', root_path='../datasets/us_small', resume_path='', rou
         # args.activation = 'tanh'
         setup_seed(args.seed)
 
-        kernel_size = 75 #100
+        kernel_size = 75
         thresh = 0.1
-        frame_num = 5 #9 #5
+        frame_num = 5 
         time_step = 3
 
         out_dir = os.path.join('../datasets/us_small', 'us_mmg_%s_th%s_kn%d_rd%d%s' %
@@ -548,10 +545,10 @@ def gen_mmg(modality='US', root_path='../datasets/us_small', resume_path='', rou
             if round_num == 0 and num < 169:
                 image = image
                 # print(image.shape)
-                args.in_channels = 5 #9
+                args.in_channels = 5 
                 num += 1
             else: #if (round_num == 0 and num != 0) or round_num != 0:
-                args.in_channels = 6 #10
+                args.in_channels = 6 
                 mid = image[:,:,2]
                 mid = mid[...,np.newaxis]
 
@@ -611,8 +608,8 @@ def one_round(round_num, ep_offset, model, metrics, modality):
         args.encoder, args.encoder_weight_name) if args.encoder in smp.encoders.get_encoder_names() else None
     if modality == 'CEUS':
         preprocessing_fn = None
-        args.in_channels = 5 #9
-        args.filter = 'mean'#'gaussian'
+        args.in_channels = 5 
+        args.filter = 'mean'
         dataset = breastdatasets.ceus_dataset(image_file=os.path.join(args.data_path, 'train', 'img'),
                                               gt_path=os.path.join(args.data_path, 'train', 'labelcol'),
                                               frame_num=args.in_channels,
@@ -847,8 +844,8 @@ def eval():
         args.encoder, args.encoder_weight_name) if args.encoder in smp.encoders.get_encoder_names() else None
     if args.modality == 'CEUS':
         preprocessing_fn = None
-        args.in_channels = 5 #9
-        args.filter = 'mean'#'gaussian'
+        args.in_channels = 5 
+        args.filter = 'mean'
         test_dataset = breastdatasets.ceus_dataset(image_file=os.path.join(args.data_path, 'test', 'img'),
                                                    gt_path=os.path.join(args.data_path, 'test', 'labelcol'),
                                                    frame_num=args.in_channels,
@@ -874,7 +871,7 @@ def eval():
 
         metrics = [
             DiceScore(),
-            HausdorffScore(),
+            # HausdorffScore(),
         ]
         test_epoch = smp.utils.train.ValidEpoch(
             model,
@@ -924,7 +921,7 @@ def eval():
 
         metrics = [
             DiceScore(),
-            HausdorffScore(),
+            # HausdorffScore(),
         ]
         test_epoch = smp.utils.train.ValidEpoch(
             model,
@@ -1099,8 +1096,8 @@ def create_model(args):
         if args.modality == 'US':
             args.in_channels = 4
         else:
-            args.in_channels = 6 #10
-        config_vit.in_channels = args.in_channels #+ 1 # 3
+            args.in_channels = 6 
+        config_vit.in_channels = args.in_channels 
  
         # print("test the config of transunet!!!!!!!!!!")                           
         # print(config_vit)
@@ -1141,8 +1138,8 @@ def main(args):
             args.modality = 'CEUS'
             args.data_path = '../datasets/ceus_frames'
             args.resume_path = args.ceus_resume
-            args.kernel_size = 100 #75 # 100
-            args.in_channels = 5 #9 #5
+            args.kernel_size = 100
+            args.in_channels = 5 
             gen_mmg(modality=args.modality, root_path=args.data_path,
                     resume_path=args.ceus_resume, round_num=r, model_name=args.model_name, suffix=args.suffix)
 
@@ -1150,7 +1147,7 @@ def main(args):
         args.modality = 'US'
         args.data_path = '../datasets/us_small'
         args.resume_path = args.us_resume
-        args.kernel_size = 75 #100 #75
+        args.kernel_size = 75 
         args.in_channels = 3
 
         if r == 0:
@@ -1175,8 +1172,8 @@ def main(args):
         args.modality = 'CEUS'
         args.data_path = '../datasets/ceus_frames'
         args.resume_path = args.ceus_resume
-        args.kernel_size = 100 #75 #50 #100
-        args.in_channels = 5 #9 #5
+        args.kernel_size = 100 
+        args.in_channels = 5
 
         if r == 0:
             ######################################### CREATE MODEL #########################################

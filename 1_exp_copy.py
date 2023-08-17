@@ -53,25 +53,7 @@ https://github.com/CSAILVision/semantic-segmentation-pytorch
 
 '''
 
-'''
-mkdir -p /root/.cache/torch/hub/checkpoints/
-cd /mnt/nfs-storage/xiexiaozheng/
-rm -rf /root/.cache/torch/hub/checkpoints
-ln -s /mnt/nfs-storage/xiexiaozheng/checkpoints /root/.cache/torch/hub
-cd /mnt/nfs-storage/wutianhao/Exp1_Single_Modality
-python 1_exp.py --modality=CEUS --in_channels=5 
---batch-size=16 --model_name=TransUnet 
---data-path=/mnt/nfs-storage/wutianhao/datasets/ceus_frames 
---lr=1e-4 --min-lr=5e-5 --epochs=500 --task=ceusmmg 
---criterion_name=DiceLoss --use_mmg --filter=None --kernel_size=100
-'''
-'''
-python 1_exp.py --modality=US --in_channels=3 
---batch-size=16 --model_name=TransUnet 
---data-path=/mnt/nfs-storage/wutianhao/datasets/us_small 
---lr=1e-4 --min-lr=5e-5 --epochs=500 --task=us 
---criterion_name=DiceLoss  --filter=mean --kernel_size=50
-'''
+
 class DiceScore(base.Metric):
 
     def __init__(self, activation=None, **kwargs):
@@ -216,7 +198,7 @@ def get_args_parser():
                         help='activatiuon func to apply after the final layer')
 
     parser.add_argument('--encoder_depth', default=5, type=int, help='model encoder depth')
-    parser.add_argument('--input-size', default=224, type=int, help='images input size')
+    parser.add_argument('--input-size', default=320, type=int, help='images input size')
     parser.add_argument('--nb_classes', default=1, type=int, help='class num')
 
     parser.add_argument('--drop', type=float, default=0.0, metavar='PCT',
@@ -616,8 +598,8 @@ def main(args):
 
     metrics = [
         DiceScore(), 
-        smp.utils.metrics.IoU(threshold=0.5),
-        HDScore()
+        # smp.utils.metrics.IoU(threshold=0.5),
+        # HDScore()
         # HausdorffScore(),
         # AvgHausdorffScore(),
         # Hausdorff95Score()
@@ -758,9 +740,9 @@ def eval():
 
             metrics = [
                 DiceScore(),
-                smp.utils.metrics.IoU(threshold=0.5),
-                HDScore(),
-                Hausdorff95Score()
+                # smp.utils.metrics.IoU(threshold=0.5),
+                # HDScore(),
+                # Hausdorff95Score()
             ]
             test_epoch = smp.utils.train.ValidEpoch(
                 model,
@@ -810,8 +792,8 @@ def eval():
 
             metrics = [
                 DiceScore(),
-                smp.utils.metrics.IoU(threshold=0.5),
-                HDScore(),
+                # smp.utils.metrics.IoU(threshold=0.5),
+                # HDScore(),
                 # HausdorffScore(),
                 # AvgHausdorffScore(),
                 Hausdorff95Score()
