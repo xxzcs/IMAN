@@ -111,11 +111,6 @@ class HDScore(base.Metric):
     def _hd_score(self, score, target):
         target = target.float()
         hd_score = 0
-        # print("test in method!!!!!!!!!!!!!!!!!!!!")
-        # print(score)
-        # print(score.shape) # torch.Size([16, 224, 224])
-        # print(target)
-        # print(target.shape) # torch.Size([16, 224, 224])
         num = score.shape[0] #16
         
         for i in range(num):
@@ -132,10 +127,8 @@ class HDScore(base.Metric):
     def forward(self, y_pr, y_gt):
         # 1-dice_loss
         y_pr = self.activation(y_pr)
-        # print(y_pr.shape) # torch.Size([16, 1, 224, 224])
-        # print(y_gt.shape) # torch.Size([16, 1, 224, 224])
-        hd_score = self._hd_score(y_pr[:, 0, ...], y_gt[:, 0, ...]) #切片意义
-        # hd_score = self._hd_score(y_pr, y_gt) #切片意义
+
+        hd_score = self._hd_score(y_pr[:, 0, ...], y_gt[:, 0, ...])
 
         hd_score_tensor = torch.tensor(hd_score).cuda()    
         return hd_score_tensor

@@ -4,7 +4,11 @@
 
 2、Environment
 
-Please prepare an environment with cuda 11.0 and python=3.8, and then use the command "pip install -r requirements.txt" for the dependencies
+Please prepare an environment with cuda 11.0 and python=3.8, 
+
+Install the segmentation library by: pip install segmentation-models-pytorch==0.2.0,
+
+More environment variables are requested in Requirements.
 
 3、Dataset
 
